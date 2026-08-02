@@ -424,7 +424,14 @@
       await loadCategories();
       await refresh();
       updateCartCount();
+      updateAuthLink();
     })();
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        updateAuthLink();
+      }
+    });
   </script>
 </body>
 </html>

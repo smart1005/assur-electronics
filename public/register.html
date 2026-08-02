@@ -122,11 +122,15 @@
         new URLSearchParams(window.location.search).get("redirect") ||
         "products.html";
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        errorMsg.textContent = "";
+     form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
 
-        try {
+      const submitBtn = form.querySelector("button[type=submit]");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating account...";
+
+      try {
           const data = await api.register({
             name: document.getElementById("name").value,
             email: document.getElementById("email").value,

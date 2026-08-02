@@ -157,6 +157,14 @@
         authLink.href = "login.html";
       }
     }
+
+    updateAuthLink();
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        updateAuthLink();
+      }
+    });
   </script>
 </body>
 </html>

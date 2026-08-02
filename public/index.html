@@ -331,14 +331,22 @@
         Add or replace slide images here. Each slide is one div.
         Put your real product/shop photos in these background-image URLs.
       -->
-      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=1200');"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200');"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200');"></div>
+      <div class="hero-slide active" style="background-image: url('images/feature-1.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/feature-2.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/feature-3.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/flat-screen-tv.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/gas-cooker.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/hair-clipper.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/iron.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/refrigerator.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/single-fridge.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/smart-tv.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/tv.jpg');"></div>
     </div>
 
     <div class="hero-content">
-      <h1>Quality Electronics, Delivered</h1>
-      <p>Televisions, fridges, and home appliances you can trust — at prices that make sense.</p>
+      <h1> Assur Quality Electronics, Delivered</h1>
+      <p>Televisions, fridges, and home appliances you can trust — at prices for every budget. Shop online and get fast delivery across Nigeria.</p>
       <div class="hero-buttons">
         <a href="products.html" class="btn-primary">See Our Products</a>
         <a href="about.html" class="btn-secondary">About Us</a>
@@ -561,6 +569,12 @@
       }
     }
     updateAuthLink();
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        updateAuthLink();
+      }
+    });
   </script>
 </body>
 </html>
