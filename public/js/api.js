@@ -4,9 +4,9 @@
 const API_BASE = "https://assur-electronics-api.onrender.com/api";
 
 function getToken() {
-  // Customer pages use "customerToken"; admin pages use "token".
-  // Prefer whichever is present — a given page will only ever have set one of them.
-  return localStorage.getItem("customerToken") || localStorage.getItem("token");
+  // Admin pages use "token"; customer pages use "customerToken".
+  // Prefer admin token first so protected admin API calls do not accidentally use a customer token.
+  return localStorage.getItem("token") || localStorage.getItem("customerToken");
 }
 
 function authHeaders() {
