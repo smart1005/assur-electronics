@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart — Assur Electronics</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        color: #222;
+      }
+
+      .top-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 16px;
+        background: #fff;
+        border-bottom: 3px solid #d2691e;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .top-bar h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .top-bar a {
+        color: #222;
+        text-decoration: none;
+        font-size: 14px;
+        margin-left: 12px;
+      }
+
+      .page-wrap {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      }
+
+      .cart-item img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #eee;
+        flex-shrink: 0;
+      }
+
+      .cart-item .info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .cart-item .name {
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 0 4px;
+      }
+
+      .cart-item .price {
+        font-size: 13px;
+        color: #d2691e;
+        font-weight: bold;
+        margin: 0;
+      }
+
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .qty-controls button {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #ccc;
+        background: #fff;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .qty-controls span {
+        min-width: 20px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .remove-btn {
+        background: none;
+        border: none;
+        color: #b00020;
+        font-size: 13px;
+        cursor: pointer;
+        margin-left: 8px;
+      }
+
+      .summary {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      }
+
+      .summary .total-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 14px;
+      }
+
+      .checkout-btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background: #d2691e;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .checkout-btn:hover {
+        background: #b85c1a;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+      }
+
+      .empty-state a {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 12px 22px;
+        background: #d2691e;
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h2>Assur Electronics</h2>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="orders.html">My Orders</a>
+        <a href="login.html" id="authLink">Login</a>
+      </div>
+    </div>
+
+    <div class="page-wrap">
+      <h1>Your Cart</h1>
+      <div id="cartItems"></div>
+      <div id="emptyState" class="empty-state" style="display: none">
+        <p>Your cart is empty.</p>
+        <a href="products.html">Browse Products</a>
+      </div>
+      <div class="summary" id="summaryBox" style="display: none">
+        <div class="total-row">
+          <span>Total</span>
+          <span id="totalPrice">₦0</span>
+        </div>
+        <button id="checkoutBtn" class="checkout-btn">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+
+    <script>
+      function getCart() {
+        return JSON.parse(localStorage.getItem("cart") || "[]");
+      }
+
+      function saveCart(cart) {
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function renderCart() {
+        const cart = getCart();
+        const itemsWrap = document.getElementById("cartItems");
+        const emptyState = document.getElementById("emptyState");
+        const summaryBox = document.getElementById("summaryBox");
+
+        itemsWrap.innerHTML = "";
+
+        if (cart.length === 0) {
+          emptyState.style.display = "block";
+          summaryBox.style.display = "none";
+          return;
+        }
+
+        emptyState.style.display = "none";
+        summaryBox.style.display = "block";
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+          total += item.price * item.quantity;
+
+          const row = document.createElement("div");
+          row.className = "cart-item";
+          row.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="info">
+            <p class="name">${item.name}</p>
+            <p class="price">₦${Number(item.price).toLocaleString()}</p>
+          </div>
+          <div class="qty-controls">
+            <button data-action="decrease" data-index="${index}">−</button>
+            <span>${item.quantity}</span>
+            <button data-action="increase" data-index="${index}">+</button>
+          </div>
+          <button class="remove-btn" data-action="remove" data-index="${index}">Remove</button>
+        `;
+          itemsWrap.appendChild(row);
+        });
+
+        document.getElementById("totalPrice").textContent =
+          `₦${total.toLocaleString()}`;
+
+        // Wire up buttons
+        itemsWrap.querySelectorAll("button[data-action]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const index = Number(btn.getAttribute("data-index"));
+            const action = btn.getAttribute("data-action");
+            const cart = getCart();
+
+            if (action === "increase") {
+              cart[index].quantity += 1;
+            } else if (action === "decrease") {
+              cart[index].quantity -= 1;
+              if (cart[index].quantity <= 0) cart.splice(index, 1);
+            } else if (action === "remove") {
+              cart.splice(index, 1);
+            }
+
+            saveCart(cart);
+            renderCart();
+          });
+        });
+      }
+
+      renderCart();
+      document.getElementById("checkoutBtn").addEventListener("click", () => {
+  if (localStorage.getItem("customerToken")) {
+    window.location.href = "checkout.html";
+  } else {
+    window.location.href = "login.html?redirect=checkout.html";
+  }
+});
+
+
+      function updateAuthLink() {
+        const authLink = document.getElementById("authLink");
+        if (localStorage.getItem("customerToken")) {
+          authLink.textContent = "Logout";
+          authLink.href = "#";
+          authLink.addEventListener("click", () => {
+            localStorage.removeItem("customerToken");
+            localStorage.removeItem("customerUser");
+            window.location.reload();
+          });
+        } else {
+          authLink.textContent = "Login";
+          authLink.href = "login.html?redirect=cart.html";
+        }
+      }
+
+      updateAuthLink();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Assur Electronics</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      color: #222;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 3px solid #d2691e;
+    }
+
+    .top-bar h2 { margin: 0; font-size: 18px; }
+    .top-bar a { color: #222; text-decoration: none; font-size: 14px; }
+
+    .page-wrap {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 { font-size: 20px; }
+
+    .order-summary {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: bold;
+      padding-top: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: #d2691e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover { background: #b85c1a; }
+    button:disabled { background: #999; cursor: not-allowed; }
+
+    .error { color: #b00020; margin-top: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h2>Assur Electronics</h2>
+    <a href="cart.html">Back to Cart</a>
+  </div>
+
+  <div class="page-wrap">
+    <h1>Checkout</h1>
+
+    <div class="order-summary" id="orderSummary"></div>
+
+    <form id="checkoutForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="address">Delivery Address</label>
+      <input type="text" id="address" required />
+
+      <button type="submit" id="payBtn">Pay Now</button>
+      <p class="error" id="errorMsg"></p>
+    </form>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Require login — checkout.html should only be reached via the gated flow,
+    // but guard directly here too in case someone lands here another way.
+    if (!localStorage.getItem("customerToken")) {
+      window.location.href = "login.html?redirect=checkout.html";
+    }
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    }
+
+    const cart = getCart();
+
+    if (cart.length === 0) {
+      window.location.href = "cart.html";
+    }
+
+    // Pre-fill from the customer's saved profile, if available
+    const savedUser = JSON.parse(localStorage.getItem("customerUser") || "null");
+    if (savedUser) {
+      document.getElementById("name").value = savedUser.name || "";
+      document.getElementById("email").value = savedUser.email || "";
+    }
+
+    function renderSummary() {
+      const wrap = document.getElementById("orderSummary");
+      wrap.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item) => {
+        const lineTotal = item.price * item.quantity;
+        total += lineTotal;
+
+        const row = document.createElement("div");
+        row.className = "summary-item";
+        row.innerHTML = `
+          <span>${item.name} × ${item.quantity}</span>
+          <span>₦${lineTotal.toLocaleString()}</span>
+        `;
+        wrap.appendChild(row);
+      });
+
+      const totalRow = document.createElement("div");
+      totalRow.className = "summary-total";
+      totalRow.innerHTML = `<span>Total</span><span>₦${total.toLocaleString()}</span>`;
+      wrap.appendChild(totalRow);
+
+      return total;
+    }
+
+    const total = renderSummary();
+
+    document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errorMsg = document.getElementById("errorMsg");
+      const payBtn = document.getElementById("payBtn");
+      errorMsg.textContent = "";
+
+      const customerName = document.getElementById("name").value;
+      const customerEmail = document.getElementById("email").value;
+      const customerAddress = document.getElementById("address").value;
+
+      payBtn.disabled = true;
+      payBtn.textContent = "Placing order...";
+
+      try {
+        // Step 1: create one order per cart item
+        const createdOrders = [];
+
+        for (const item of cart) {
+          const result = await api.createOrder({
+            productId: item.productId,
+            quantity: item.quantity,
+            customerName,
+            customerEmail,
+            customerAddress,
+          });
+          createdOrders.push(result.order);
+        }
+
+        // Step 2: initialize one combined payment covering all orders just created
+        payBtn.textContent = "Starting payment...";
+
+        const orderIds = createdOrders.map((o) => o.id);
+
+        const paymentResult = await api.initializePayment({
+          orderIds,
+          email: customerEmail,
+          amount: total,
+        });
+
+        // Clear the cart only once payment has actually been initialized
+        localStorage.removeItem("cart");
+
+        // Step 3: send the customer to Paystack's checkout page
+        window.location.href = paymentResult.data.authorization_url;
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        payBtn.disabled = false;
+        payBtn.textContent = "Pay Now";
+      }
+    });
+  </script>
+</body>
+</html>

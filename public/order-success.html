@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation — Assur Electronics</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 30px 24px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 { font-size: 20px; margin-top: 0; }
+
+    .icon { font-size: 48px; margin-bottom: 10px; }
+
+    p { color: #555; font-size: 14px; }
+
+    a.btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 22px;
+      background: #d2691e;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="statusBox">
+    <div class="icon">⏳</div>
+    <h1>Confirming your payment...</h1>
+    <p>Please wait a moment.</p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const reference = new URLSearchParams(window.location.search).get("reference");
+    const statusBox = document.getElementById("statusBox");
+
+    async function confirm() {
+      if (!reference) {
+        statusBox.innerHTML = `
+          <div class="icon">⚠️</div>
+          <h1>Missing payment reference</h1>
+          <p>We couldn't find a payment reference in the URL.</p>
+          <a class="btn" href="products.html">Back to Shop</a>
+        `;
+        return;
+      }
+
+      try {
+        await api.verifyPayment(reference);
+        statusBox.innerHTML = `
+          <div class="icon">✅</div>
+          <h1>Payment Successful!</h1>
+          <p>Your order has been placed and payment confirmed.</p>
+          <a class="btn" href="orders.html">View My Orders</a>
+        `;
+      } catch (err) {
+        statusBox.innerHTML = `
+          <div class="icon">⚠️</div>
+          <h1>Couldn't confirm payment</h1>
+          <p>${err.message}</p>
+          <a class="btn" href="orders.html">Check My Orders</a>
+        `;
+      }
+    }
+
+    confirm();
+  </script>
+</body>
+</html>

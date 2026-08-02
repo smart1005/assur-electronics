@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products — Assur Electronics</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      color: #222;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 3px solid #d2691e;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .top-bar h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .top-bar a {
+      color: #222;
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 12px;
+    }
+
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .filters select,
+    .filters input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+.category-section {
+      margin-bottom: 30px;
+    }
+
+    .row-header {
+      font-size: 18px;
+      margin: 0 0 12px;
+      border-left: 4px solid #d2691e;
+      padding-left: 10px;
+    }
+
+    .row-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .row-scroll .card {
+      flex: 0 0 160px;
+      width: 160px;
+    }
+
+   @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .card-body {
+        padding: 6px;
+      }
+
+      .card-body .name {
+        font-size: 11px;
+      }
+
+      .card-body .brand {
+        font-size: 10px;
+      }
+
+      .card-body .price {
+        font-size: 12px;
+      }
+
+      .card-body button {
+        font-size: 11px;
+        padding: 6px;
+      }
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .card-body {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-body .name {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0 0 4px;
+    }
+
+    .card-body .brand {
+      font-size: 12px;
+      color: #666;
+      margin: 0 0 6px;
+    }
+
+   .card-body .price {
+      font-size: 15px;
+      font-weight: bold;
+      margin: 0 0 10px;
+      color: #d2691e;
+    }
+
+    .card-body button {
+      margin-top: auto;
+      padding: 8px;
+      background: #d2691e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .card-body button:hover {
+      background: #b85c1a;
+    }
+
+    .card-body button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: #666;
+      padding: 40px 0;
+    }
+
+    .cart-count {
+      background: #d2691e;
+      color: #fff;
+      border-radius: 50%;
+      padding: 1px 6px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h2>Assur Electronics</h2>
+   <div>
+      <a href="index.html">Home</a>
+     <a href="orders.html">My Orders</a>
+      <a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a>
+      <a href="login.html" id="authLink">Login</a>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Search products..." />
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+      </select>
+    </div>
+
+   <div id="rowsWrap"></div>
+    <div class="grid" id="productsGrid" style="display:none;"></div>
+    <p class="empty-msg" id="emptyMsg" style="display:none;">No products found.</p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const grid = document.getElementById("productsGrid");
+    const emptyMsg = document.getElementById("emptyMsg");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function updateCartCount() {
+      const cart = getCart();
+      const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cartCount").textContent = totalQty;
+    }
+
+    function addToCart(product) {
+      const cart = getCart();
+      const existing = cart.find((item) => item.productId === product.id);
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images?.[0] || "",
+          quantity: 1,
+        });
+      }
+
+      saveCart(cart);
+      updateCartCount();
+    }
+
+   function buildCard(product) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const outOfStock = product.stock <= 0;
+
+      card.innerHTML = `
+        <img src="${product.images?.[0] || ''}" alt="${product.name}" />
+        <div class="card-body">
+          <p class="name">${product.name}</p>
+          <p class="brand">${product.brand}</p>
+          <p class="price">₦${Number(product.price).toLocaleString()}</p>
+          <button ${outOfStock ? "disabled" : ""}>
+            ${outOfStock ? "Out of Stock" : "Add to Cart"}
+          </button>
+        </div>
+      `;
+
+      if (!outOfStock) {
+        card.querySelector("button").addEventListener("click", () => addToCart(product));
+      }
+
+      return card;
+    }
+
+    function renderProducts(products) {
+      grid.innerHTML = "";
+
+      if (products.length === 0) {
+        emptyMsg.style.display = "block";
+        return;
+      }
+
+      emptyMsg.style.display = "none";
+      products.forEach((product) => grid.appendChild(buildCard(product)));
+    }
+
+    function buildCategorySection(title, products) {
+      const section = document.createElement("div");
+      section.className = "category-section";
+      section.innerHTML = `<h2 class="row-header">${title}</h2>`;
+
+      const scroll = document.createElement("div");
+      scroll.className = "row-scroll";
+      products.forEach((p) => scroll.appendChild(buildCard(p)));
+      section.appendChild(scroll);
+
+      return section;
+    }
+
+    async function loadCategoryRows() {
+      const rowsWrap = document.getElementById("rowsWrap");
+      rowsWrap.innerHTML = "";
+
+      try {
+        const { products: featured } = await api.getProducts("?featured=true");
+        if (featured.length > 0) {
+          rowsWrap.appendChild(buildCategorySection("This Week's Featured Products", featured));
+        }
+      } catch (err) {
+        console.error("Error loading featured products:", err.message);
+      }
+
+      try {
+        const { categories } = await api.getCategories();
+        for (const cat of categories) {
+          const { products } = await api.getProducts(`?category=${encodeURIComponent(cat.name)}`);
+          if (products.length === 0) continue;
+          rowsWrap.appendChild(buildCategorySection(cat.name, products));
+        }
+      } catch (err) {
+        console.error("Error loading category rows:", err.message);
+      }
+    }
+
+    function showRowsView() {
+      document.getElementById("rowsWrap").style.display = "block";
+      grid.style.display = "none";
+      emptyMsg.style.display = "none";
+    }
+
+    function showGridView() {
+      document.getElementById("rowsWrap").style.display = "none";
+      grid.style.display = "grid";
+    }
+
+    async function refresh() {
+      if (categoryFilter.value || searchInput.value.trim()) {
+        showGridView();
+        await loadProducts();
+      } else {
+        showRowsView();
+        await loadCategoryRows();
+      }
+    }
+
+    async function loadProducts() {
+      const params = new URLSearchParams();
+      if (categoryFilter.value) params.set("category", categoryFilter.value);
+      if (searchInput.value.trim()) params.set("search", searchInput.value.trim());
+
+      try {
+        const query = params.toString();
+        const data = await api.getProducts(query ? `?${query}` : "");
+        renderProducts(data.products);
+      } catch (err) {
+        console.error("Error loading products:", err.message);
+      }
+    }
+
+    async function loadCategories() {
+      try {
+        const data = await api.getCategories();
+        data.categories.forEach((cat) => {
+          const opt = document.createElement("option");
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          categoryFilter.appendChild(opt);
+        });
+
+        // Pre-select category from URL, e.g. products.html?category=TVs
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryFromUrl = urlParams.get("category");
+        if (categoryFromUrl) {
+          categoryFilter.value = categoryFromUrl;
+        }
+      } catch (err) {
+        console.error("Error loading categories:", err.message);
+      }
+    }
+
+    categoryFilter.addEventListener("change", refresh);
+
+    let searchTimeout;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(refresh, 400);
+    });
+
+    function updateAuthLink() {
+      const authLink = document.getElementById("authLink");
+      const savedUser = localStorage.getItem("customerUser");
+
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        authLink.textContent = `Log Out (${user.name.split(" ")[0]})`;
+        authLink.href = "#";
+        authLink.onclick = (e) => {
+          e.preventDefault();
+          localStorage.removeItem("customerToken");
+          localStorage.removeItem("customerUser");
+          window.location.reload();
+        };
+      }
+    }
+
+     (async function init() {
+      await loadCategories();
+      await refresh();
+      updateCartCount();
+    })();
+  </script>
+</body>
+</html>

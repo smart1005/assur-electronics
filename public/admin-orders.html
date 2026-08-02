@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Orders — Assur Electronics</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      color: #222;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .top-bar h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .top-bar a {
+      color: #222;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .page-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+    }
+
+    select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-processing { background: #d1ecf1; color: #0c5460; }
+    .status-shipped { background: #d4edda; color: #155724; }
+    .status-delivered { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    .payment-paid { color: #155724; font-weight: bold; }
+    .payment-unpaid { color: #b00020; font-weight: bold; }
+
+    .error {
+      color: #b00020;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* Orders table becomes stacked cards on narrow screens */
+    @media (max-width: 640px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 14px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        padding: 8px;
+      }
+
+      td {
+        border: none;
+        padding: 6px 8px;
+      }
+
+      td::before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h2>Assur Electronics — Admin</h2>
+    <div>
+      <a href="admin-products.html">Products</a> &nbsp;|&nbsp;
+      <a href="admin-orders.html">Orders</a> &nbsp;|&nbsp;
+      <a href="#" onclick="logout()">Log Out</a>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <h1>All Orders</h1>
+    <p class="error" id="errorMsg"></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Product ID</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody"></tbody>
+    </table>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered", "cancelled"];
+
+    async function loadOrders() {
+      const errorMsg = document.getElementById("errorMsg");
+      errorMsg.textContent = "";
+
+      try {
+        const data = await api.getAllOrders();
+        const tbody = document.getElementById("ordersBody");
+        tbody.innerHTML = "";
+
+        if (data.orders.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='6'>No orders yet.</td></tr>";
+          return;
+        }
+
+        data.orders.forEach((order) => {
+          const row = document.createElement("tr");
+
+          const statusOptionsHtml = STATUS_OPTIONS.map(
+            (s) => `<option value="${s}" ${s === order.status ? "selected" : ""}>${s}</option>`
+          ).join("");
+
+          row.innerHTML = `
+            <td data-label="Customer">${order.customerName}<br><small>${order.customerEmail}</small></td>
+            <td data-label="Product ID">${order.productId}</td>
+            <td data-label="Qty">${order.quantity}</td>
+            <td data-label="Total">₦${Number(order.totalPrice).toLocaleString()}</td>
+            <td data-label="Payment"><span class="${order.paymentStatus === 'paid' ? 'payment-paid' : 'payment-unpaid'}">${order.paymentStatus}</span></td>
+            <td data-label="Status">
+              <select class="status-pill status-${order.status}" data-id="${order.id}">
+                ${statusOptionsHtml}
+              </select>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Wire up status change handlers
+        document.querySelectorAll("select[data-id]").forEach((select) => {
+          select.addEventListener("change", async (e) => {
+            const orderId = e.target.getAttribute("data-id");
+            const newStatus = e.target.value;
+
+            try {
+              await api.updateOrderStatus(orderId, newStatus);
+            } catch (err) {
+              errorMsg.textContent = err.message;
+              await loadOrders(); // revert to actual state on failure
+            }
+          });
+        });
+      } catch (err) {
+        errorMsg.textContent = err.message;
+      }
+    }
+
+    loadOrders();
+  </script>
+</body>
+</html>

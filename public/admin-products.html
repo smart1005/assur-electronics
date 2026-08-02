@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Products — Assur Electronics</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      color: #222;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .top-bar h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .top-bar a {
+      color: #222;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .page-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 18px;
+      padding: 12px 18px;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .error {
+      color: #b00020;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* Product table becomes stacked cards on narrow screens */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 14px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        padding: 8px;
+      }
+
+      td {
+        border: none;
+        padding: 6px 8px;
+      }
+
+      td::before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h2>Assur Electronics — Admin</h2>
+    <div>
+      <a href="admin-products.html">Products</a> &nbsp;|&nbsp;
+      <a href="admin-orders.html">Orders</a> &nbsp;|&nbsp;
+      <a href="#" onclick="logout()">Log Out</a>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <h1>Add a Product</h1>
+
+    <form id="productForm">
+      <label for="isFeatured">
+        <input type="checkbox" id="isFeatured" style="width:auto;display:inline;" />
+        This is a Featured Product (no category, max 8 at a time)
+      </label>
+
+      <div id="categoryField">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="">-- Select category --</option>
+        </select>
+        <p style="margin-top:8px;">
+          <a href="#" id="newCategoryToggle">+ Add new category</a>
+        </p>
+        <div id="newCategoryBox" style="display:none; margin-top:10px;">
+          <input type="text" id="newCategoryName" placeholder="New category name" />
+          <button type="button" id="createCategoryBtn">Create Category</button>
+        </div>
+      </div>
+
+      <label for="name">Product Name</label>
+      <input type="text" id="name" required />
+
+      <label for="description">Description</label>
+      <textarea id="description" rows="3" required></textarea>
+
+      <label for="price">Price (NGN)</label>
+      <input type="number" id="price" required />
+
+      <label for="brand">Brand</label>
+      <input type="text" id="brand" required />
+
+      <label for="stock">Stock Quantity</label>
+      <input type="number" id="stock" required />
+
+      <label for="imageInput">Product Image</label>
+      <input type="file" id="imageInput" accept="image/*" required />
+      <p style="font-size:12px; color:#666; margin-top:4px;">Max file size: 8mb</p>
+
+      <button type="submit">Add Product</button>
+      <p class="error" id="errorMsg"></p>
+      <p id="successMsg" style="color: green; margin-top: 10px;"></p>
+    </form>
+
+    <h1 style="margin-top: 50px;">All Products</h1>
+    <table id="productsTable">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Featured</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="productsBody"></tbody>
+    </table>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const isFeaturedCheckbox = document.getElementById("isFeatured");
+    const categoryField = document.getElementById("categoryField");
+    const categorySelect = document.getElementById("category");
+    const newCategoryToggle = document.getElementById("newCategoryToggle");
+    const newCategoryBox = document.getElementById("newCategoryBox");
+    const errorMsg = document.getElementById("errorMsg");
+    const successMsg = document.getElementById("successMsg");
+
+    // Toggle category field based on featured checkbox
+    isFeaturedCheckbox.addEventListener("change", () => {
+      categoryField.style.display = isFeaturedCheckbox.checked ? "none" : "block";
+    });
+
+    newCategoryToggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      newCategoryBox.style.display =
+        newCategoryBox.style.display === "none" ? "block" : "none";
+    });
+
+    async function loadCategories() {
+      try {
+        const data = await api.getCategories();
+        categorySelect.innerHTML = '<option value="">-- Select category --</option>';
+        data.categories.forEach((cat) => {
+          const opt = document.createElement("option");
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          categorySelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Error loading categories:", err.message);
+      }
+    }
+
+    document.getElementById("createCategoryBtn").addEventListener("click", async () => {
+      const name = document.getElementById("newCategoryName").value.trim();
+      if (!name) return;
+
+      try {
+        await api.addCategory(name);
+        document.getElementById("newCategoryName").value = "";
+        newCategoryBox.style.display = "none";
+        await loadCategories();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function loadProducts() {
+      try {
+        const data = await api.getProducts();
+        const tbody = document.getElementById("productsBody");
+        tbody.innerHTML = "";
+
+        data.products.forEach((product) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td data-label="Image"><img src="${product.images?.[0] || ''}" alt="${product.name}" width="50" /></td>
+            <td data-label="Name">${product.name}</td>
+            <td data-label="Category">${product.featured ? "—" : (product.category || '')}</td>
+            <td data-label="Price">${product.price}</td>
+            <td data-label="Stock">${product.stock}</td>
+            <td data-label="Featured">${product.featured ? "Yes" : "No"}</td>
+            <td data-label="Actions"><button type="button" onclick="deleteProduct('${product.id}')">Delete</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Error loading products:", err.message);
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("Delete this product?")) return;
+      try {
+        await api.deleteProduct(id);
+        await loadProducts();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    document.getElementById("productForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
+
+      const featured = isFeaturedCheckbox.checked;
+      const category = featured ? null : categorySelect.value;
+
+      if (!featured && !category) {
+        errorMsg.textContent = "Please select a category, or mark this as a Featured Product.";
+        return;
+      }
+
+      const imageFile = document.getElementById("imageInput").files[0];
+      if (!imageFile) {
+        errorMsg.textContent = "Please choose an image.";
+        return;
+      }
+
+      const maxSizeBytes = 8 * 1024 * 1024; // 8MB
+      if (imageFile.size > maxSizeBytes) {
+        errorMsg.textContent = `Image is too large (${(imageFile.size / 1024 / 1024).toFixed(1)}MB). Max allowed is 8MB.`;
+        return;
+      }
+
+      try {
+        const submitBtn = e.target.querySelector("button[type=submit]");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Uploading...";
+
+        // Step 1: convert image to base64 and upload to Cloudinary
+        const base64Image = await fileToBase64(imageFile);
+        const uploadResult = await api.uploadImage(base64Image);
+
+        // Step 2: create the product with the returned Cloudinary URL
+        await api.addProduct({
+          name: document.getElementById("name").value,
+          description: document.getElementById("description").value,
+          price: Number(document.getElementById("price").value),
+          brand: document.getElementById("brand").value,
+          stock: Number(document.getElementById("stock").value),
+          category,
+          featured,
+          images: [uploadResult.url],
+        });
+
+        successMsg.textContent = "Product added successfully.";
+        e.target.reset();
+        categoryField.style.display = "block";
+        await loadProducts();
+      } catch (err) {
+        errorMsg.textContent = err.message;
+      } finally {
+        const submitBtn = e.target.querySelector("button[type=submit]");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Add Product";
+      }
+    });
+
+    loadCategories();
+    loadProducts();
+  </script>
+</body>
+</html>
