@@ -23,7 +23,7 @@ const initializePayment = async (req, res) => {
         email,
         amount: amount * 100,
         metadata: { orderIds: ids },
-        callback_url: `${req.protocol}://${req.get("host")}/order-success.html`,
+        callback_url: "https://assur-electronics.web.app/order-success.html",
       },
       {
         headers: {
