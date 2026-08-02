@@ -1,7 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const app = express();
+
 const PORT = process.env.PORT || 4000;
 
 const authRoutes = require("./routes/authRoutes");
@@ -16,6 +18,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Assur Electronics API is running" });
 });
 app.use(express.static("public"));
+app.use(cors());
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 app.use(express.json({ limit: "8mb" }));
 app.use("/api/orders", orderRoutes);

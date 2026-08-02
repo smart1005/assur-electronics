@@ -1,7 +1,7 @@
 // api.js — single place for all backend calls.
 // If the API URL ever changes, change it here only.
 
-const API_BASE = "/api";
+const API_BASE = "https://assur-electronics-api.onrender.com/api";
 
 function getToken() {
   // Customer pages use "customerToken"; admin pages use "token".
