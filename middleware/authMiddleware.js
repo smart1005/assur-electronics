@@ -18,7 +18,6 @@ const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("AUTH FAILURE:", error.code, "-", error.message);
     res.status(401).json({
       message: "Invalid or expired token. Please login again.",
       error: error.message,
