@@ -4,7 +4,19 @@ const restrictTo = (...roles) => {
   return async (req, res, next) => {
     try {
       const userDoc = await db.collection("users").doc(req.user.uid).get();
+
+      if (!userDoc.exists) {
+        return res.status(403).json({
+          message: "Access denied. User profile not found.",
+        });
+      }
+
       const userData = userDoc.data();
+      if (!userData?.role) {
+        return res.status(403).json({
+          message: "Access denied. User role is not assigned.",
+        });
+      }
 
       if (!roles.includes(userData.role)) {
         return res.status(403).json({
