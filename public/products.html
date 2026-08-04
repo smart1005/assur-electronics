@@ -189,6 +189,38 @@
       padding: 40px 0;
     }
 
+.toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #222;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 200;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .toast a {
+      color: #ffb37a;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
     .cart-count {
       background: #d2691e;
       color: #fff;
@@ -223,6 +255,10 @@
     <p class="empty-msg" id="emptyMsg" style="display:none;">No products found.</p>
   </div>
 
+  <div class="toast" id="toast">
+    ✅ Added to cart — <a href="cart.html">Go to Cart</a>
+  </div>
+
   <script src="js/api.js"></script>
   <script>
     const grid = document.getElementById("productsGrid");
@@ -244,6 +280,13 @@
       document.getElementById("cartCount").textContent = totalQty;
     }
 
+    function showToast() {
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
     function addToCart(product) {
       const cart = getCart();
       const existing = cart.find((item) => item.productId === product.id);
@@ -262,6 +305,7 @@
 
       saveCart(cart);
       updateCartCount();
+      showToast();
     }
 
    function buildCard(product) {

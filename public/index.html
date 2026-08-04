@@ -1,522 +1,684 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Assur Electronics — Home</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assur Electronics — Home</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #fff;
-      margin: 0;
-      color: #222;
-    }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #fff;
+        margin: 0;
+        color: #222;
+      }
 
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 16px;
-      background: #fff;
-      border-bottom: 3px solid #d2691e;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
+      .top-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 16px;
+        background: #fff;
+        border-bottom: 3px solid #d2691e;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
 
-    .top-bar h2 {
-      margin: 0;
-      font-size: 18px;
-    }
+      .top-bar h2 {
+        margin: 0;
+        font-size: 18px;
+      }
 
-    .top-bar a {
-      color: #222;
-      text-decoration: none;
-      font-size: 14px;
-      margin-left: 14px;
-      font-weight: bold;
-    }
+      .top-bar a {
+        color: #222;
+        text-decoration: none;
+        font-size: 14px;
+        margin-left: 14px;
+        font-weight: bold;
+      }
 
-    .top-bar a:hover {
-      color: #d2691e;
-    }
+      .top-bar a:hover {
+        color: #d2691e;
+      }
 
-    /* HERO SECTION — three layers stacked: 3D canvas, photo slider, text/buttons */
-    .hero {
-      position: relative;
-      height: 90vh;
-      min-height: 480px;
-      overflow: hidden;
-      background: #000;
-    }
+      /* HERO SECTION — three layers stacked: 3D canvas, photo slider, text/buttons */
+      .hero {
+        position: relative;
+        height: 90vh;
+        min-height: 480px;
+        overflow: hidden;
+        background: #000;
+      }
 
-    #heroCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
+      #heroCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
 
-    .hero-slider {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-    }
+      .hero-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+      }
 
-    .hero-slide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 1.2s ease-in-out;
-    }
+      .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+      }
 
-    .hero-slide.active {
-      opacity: 0.45; /* dimmed so the starfield + text stay visible */
-    }
+      .hero-slide.active {
+        opacity: 0.45; /* dimmed so the starfield + text stay visible */
+      }
 
-    .hero-content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
+      .hero-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+      }
 
-    .hero-content h1 {
-      color: #fff;
-      font-size: 32px;
-      margin: 0 0 10px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-    }
+      .hero-content h1 {
+        color: #fff;
+        font-size: 32px;
+        margin: 0 0 10px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      }
 
-    .hero-content p {
-      color: #eee;
-      font-size: 16px;
-      margin: 0 0 26px;
-      max-width: 480px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-    }
+      .hero-content p {
+        color: #eee;
+        font-size: 16px;
+        margin: 0 0 26px;
+        max-width: 480px;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      }
 
-    .hero-buttons {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+      .hero-buttons {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
 
-    .hero-buttons a {
-      padding: 12px 22px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
-    }
+      .hero-buttons a {
+        padding: 12px 22px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+      }
 
-    .btn-primary {
-      background: #d2691e;
-      color: #fff;
-    }
+      .btn-primary {
+        background: #d2691e;
+        color: #fff;
+      }
 
-    .btn-primary:hover {
-      background: #b85c1a;
-    }
+      .btn-primary:hover {
+        background: #b85c1a;
+      }
 
-    .btn-secondary {
-      background: rgba(255,255,255,0.9);
-      color: #222;
-    }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.9);
+        color: #222;
+      }
 
-    .btn-secondary:hover {
-      background: #fff;
-    }
+      .btn-secondary:hover {
+        background: #fff;
+      }
 
-    /* Placeholder below hero — category rows and featured products come next */
-    .below-hero-placeholder {
-      padding: 40px 16px;
-      text-align: center;
-      color: #999;
-    }
-    /* Category rows + featured products */
-    .section-wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 30px 16px;
-    }
+      /* Placeholder below hero — category rows and featured products come next */
+      .below-hero-placeholder {
+        padding: 40px 16px;
+        text-align: center;
+        color: #999;
+      }
+      /* Category rows + featured products */
+      .section-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 16px;
+      }
 
-    .section-title {
-      font-size: 20px;
-      margin: 0 0 14px;
-      border-left: 4px solid #d2691e;
-      padding-left: 10px;
-    }
+      .section-title {
+        font-size: 20px;
+        margin: 0 0 14px;
+        border-left: 4px solid #d2691e;
+        padding-left: 10px;
+      }
 
-    .category-row {
-      margin-bottom: 34px;
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+      .category-row {
+        margin-bottom: 34px;
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
 
-    .category-row.in-view {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      .category-row.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-    .row-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+      .row-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-    .see-more {
-      color: #d2691e;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: bold;
-      white-space: nowrap;
-    }
+      .see-more {
+        color: #d2691e;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
 
-    .row-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-    }
+      .row-scroll {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+      }
 
-    .mini-card {
-      flex: 0 0 auto;
-      width: 130px;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      text-decoration: none;
-      color: #222;
-    }
+      .mini-card {
+        flex: 0 0 auto;
+        width: 130px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        text-decoration: none;
+        color: #222;
+      }
 
-    .mini-card img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      background: #eee;
-    }
+      .mini-card img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        background: #eee;
+      }
 
-    .mini-card .mini-body {
-      padding: 8px;
-    }
+      .mini-card .mini-body {
+        padding: 8px;
+      }
 
-    .mini-card .mini-name {
-      font-size: 12px;
-      font-weight: bold;
-      margin: 0 0 4px;
-    }
+      .mini-card .mini-name {
+        font-size: 12px;
+        font-weight: bold;
+        margin: 0 0 4px;
+      }
 
-    .mini-card .mini-price {
-      font-size: 12px;
-      color: #d2691e;
-      font-weight: bold;
-      margin: 0;
-    }
+      .mini-card .mini-price {
+        font-size: 12px;
+        color: #d2691e;
+        font-weight: bold;
+        margin: 0;
+      }
 
-    /* Footer */
-    footer {
-      background: #222;
-      color: #eee;
-      padding: 30px 16px;
-      margin-top: 20px;
-    }
+      /* Footer */
+      footer {
+        background: #222;
+        color: #eee;
+        padding: 30px 16px;
+        margin-top: 20px;
+      }
 
-    .footer-wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      justify-content: space-between;
-    }
+      .footer-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: space-between;
+      }
 
-    .footer-col h3 {
-      color: #fff;
-      font-size: 15px;
-      margin: 0 0 10px;
-    }
+      .footer-col h3 {
+        color: #fff;
+        font-size: 15px;
+        margin: 0 0 10px;
+      }
 
-    .footer-col p, .footer-col a {
-      font-size: 13px;
-      color: #ccc;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 6px;
-    }
+      .footer-col p,
+      .footer-col a {
+        font-size: 13px;
+        color: #ccc;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 6px;
+      }
 
-    .footer-col a:hover {
-      color: #d2691e;
-    }
+      .footer-col a:hover {
+        color: #d2691e;
+      }
 
-    .footer-bottom {
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-      margin-top: 24px;
-      border-top: 1px solid #444;
-      padding-top: 14px;
-    }
+      .footer-bottom {
+        text-align: center;
+        font-size: 12px;
+        color: #888;
+        margin-top: 24px;
+        border-top: 1px solid #444;
+        padding-top: 14px;
+      }
 
-    /* Floating WhatsApp button */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #25d366;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      z-index: 100;
-      text-decoration: none;
-    }
+      /* Floating WhatsApp button */
+      .whatsapp-float {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #25d366;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        text-decoration: none;
+      }
 
-    .whatsapp-float svg {
-      width: 28px;
-      height: 28px;
-      fill: #fff;
-    }
-  </style>
-</head>
-<body>
-  <div class="top-bar">
-    <h2>Assur Electronics</h2>
-    <div>
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="about.html">About Us</a>
-      <a href="cart.html">Cart</a>
-      <a href="orders.html">My Orders</a>
-      <a href="login.html" id="authLink">Login</a>
+      .whatsapp-float svg {
+        width: 28px;
+        height: 28px;
+        fill: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h2>Assur Electronics</h2>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About Us</a>
+        <a href="cart.html">Cart</a>
+        <a href="orders.html">My Orders</a>
+        <a href="login.html" id="authLink">Login</a>
+      </div>
     </div>
-  </div>
 
-  <div class="hero">
-    <canvas id="heroCanvas"></canvas>
+    <div class="hero">
+      <canvas id="heroCanvas"></canvas>
 
-    <div class="hero-slider" id="heroSlider">
-      <!--
+      <div class="hero-slider" id="heroSlider">
+        <!--
         Add or replace slide images here. Each slide is one div.
         Put your real product/shop photos in these background-image URLs.
       -->
-      <div class="hero-slide active" style="background-image: url('images/feature-1.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/feature-2.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/feature-3.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/flat-screen-tv.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/gas-cooker.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/hair-clipper.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/iron.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/refrigerator.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/single-fridge.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/smart-tv.jpg');"></div>
-      <div class="hero-slide" style="background-image: url('images/tv.jpg');"></div>
-    </div>
+        <div
+          class="hero-slide active"
+          style="background-image: url(&quot;images/feature-1.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/feature-2.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/feature-3.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/flat-screen-tv.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/gas-cooker.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/hair-clipper.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/iron.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/refrigerator.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/single-fridge.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/smart-tv.jpg&quot;)"
+        ></div>
+        <div
+          class="hero-slide"
+          style="background-image: url(&quot;images/tv.jpg&quot;)"
+        ></div>
+      </div>
 
-    <div class="hero-content">
-      <h1> Assur Quality Electronics, Delivered</h1>
-      <p>Televisions, fridges, and home appliances you can trust — at prices for every budget. Shop online and get fast delivery across Nigeria.</p>
-      <div class="hero-buttons">
-        <a href="products.html" class="btn-primary">See Our Products</a>
-        <a href="about.html" class="btn-secondary">About Us</a>
+      <div class="hero-content">
+        <h1>Assur Quality Electronics, Delivered</h1>
+        <p>
+          Televisions, fridges, and home appliances you can trust — at prices
+          for every budget. Shop online and get fast delivery across Nigeria.
+        </p>
+        <div class="hero-buttons">
+          <a href="products.html" class="btn-primary">See Our Products</a>
+          <a href="about.html" class="btn-secondary">About Us</a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="section-wrap" id="categoriesWrap">
-    <!-- Category rows get injected here by JS -->
-  </div>
-
-  <div class="section-wrap" id="featuredWrap" style="display:none;">
-    <div class="category-row" id="featuredRow">
-      <div class="row-header">
-        <h2 class="section-title">Featured Products</h2>
-        <a href="products.html" class="see-more">See More →</a>
-      </div>
-      <div class="row-scroll" id="featuredScroll"></div>
+    <div class="section-wrap" id="categoriesWrap">
+      <!-- Category rows get injected here by JS -->
     </div>
-  </div>
 
-  <footer>
-    <div class="footer-wrap">
-      <div class="footer-col">
-        <h3>Contact Us</h3>
-        <a href="https://wa.me/2348061402159" target="_blank">WhatsApp: 08061402159</a>
-        <a href="mailto:assurelectronics10@gmail.com">Email: assurelectronics10@gmail.com</a>
-      </div>
-      <div class="footer-col">
-        <h3>Our Location</h3>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3974.4479768387064!2d7.931600574068168!3d5.030861694945689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105d57c0f3c8e92d%3A0x48cecad2bb0842b1!2sAssur%20Electronics!5e0!3m2!1sen!2sng!4v1785432426917!5m2!1sen!2sng"
-          width="100%" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <div class="section-wrap" id="featuredWrap" style="display: none">
+      <div class="category-row" id="featuredRow">
+        <div class="row-header">
+          <h2 class="section-title">Featured Products</h2>
+          <a href="products.html" class="see-more">See More →</a>
+        </div>
+        <div class="row-scroll" id="featuredScroll"></div>
       </div>
     </div>
-    <div class="footer-bottom">
-      &copy; <span id="year"></span> Assur Electronics. All rights reserved.
+
+    <footer>
+      <div class="footer-wrap">
+        <div class="footer-col">
+          <h3>Contact Us</h3>
+          <a href="https://wa.me/2348061402159" target="_blank"
+            >WhatsApp: 08061402159</a
+          >
+          <a href="mailto:assurelectronics10@gmail.com"
+            >Email: assurelectronics10@gmail.com</a
+          >
+        </div>
+        <div class="footer-col">
+          <h3>Our Location</h3>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3974.4479768387064!2d7.931600574068168!3d5.030861694945689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105d57c0f3c8e92d%3A0x48cecad2bb0842b1!2sAssur%20Electronics!5e0!3m2!1sen!2sng!4v1785432426917!5m2!1sen!2sng"
+            width="100%"
+            height="160"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; <span id="year"></span> Assur Electronics. All rights reserved.
+      </div>
+    </footer>
+
+    <a
+      class="whatsapp-float"
+      href="https://wa.me/2348061402159"
+      target="_blank"
+      aria-label="Chat on WhatsApp"
+    >
+      <svg viewBox="0 0 32 32">
+        <path
+          d="M16.001 3C9.373 3 4 8.373 4 15c0 2.34.652 4.527 1.786 6.393L4 29l7.822-1.75A11.94 11.94 0 0016.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3zm0 21.75c-1.94 0-3.75-.57-5.27-1.55l-.378-.24-4.64 1.04 1.04-4.52-.25-.4A9.72 9.72 0 016.25 15c0-5.38 4.38-9.75 9.75-9.75S25.75 9.62 25.75 15 21.37 24.75 16.001 24.75zm5.4-7.32c-.296-.148-1.75-.864-2.02-.963-.27-.1-.468-.148-.665.148-.198.296-.76.963-.932 1.16-.172.198-.344.222-.64.074-.296-.148-1.25-.46-2.38-1.47-.88-.785-1.474-1.754-1.647-2.05-.172-.296-.018-.456.13-.603.134-.133.296-.345.444-.518.148-.173.198-.296.296-.494.099-.198.05-.37-.025-.518-.074-.148-.665-1.6-.91-2.19-.24-.577-.484-.5-.665-.51-.172-.008-.37-.01-.567-.01s-.518.074-.79.37c-.271.296-1.037 1.014-1.037 2.47 0 1.457 1.062 2.865 1.21 3.062.148.198 2.09 3.19 5.06 4.474.707.305 1.258.487 1.688.623.709.226 1.354.194 1.864.118.569-.085 1.75-.716 2-1.407.247-.692.247-1.285.173-1.408-.074-.123-.271-.198-.567-.346z"
+        />
+      </svg>
+    </a>
+
+    <div
+      class="toast"
+      id="toast"
+      style="
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #222;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+        z-index: 200;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      "
+    >
+      ✅ Added to cart —
+      <a
+        href="cart.html"
+        style="color: #ffb37a; font-weight: bold; text-decoration: none"
+        >Go to Cart</a
+      >
     </div>
-  </footer>
+    <style>
+      .toast.show {
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0) !important;
+        pointer-events: auto !important;
+      }
+    </style>
 
-  <a class="whatsapp-float" href="https://wa.me/2348061402159" target="_blank" aria-label="Chat on WhatsApp">
-    <svg viewBox="0 0 32 32"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.34.652 4.527 1.786 6.393L4 29l7.822-1.75A11.94 11.94 0 0016.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3zm0 21.75c-1.94 0-3.75-.57-5.27-1.55l-.378-.24-4.64 1.04 1.04-4.52-.25-.4A9.72 9.72 0 016.25 15c0-5.38 4.38-9.75 9.75-9.75S25.75 9.62 25.75 15 21.37 24.75 16.001 24.75zm5.4-7.32c-.296-.148-1.75-.864-2.02-.963-.27-.1-.468-.148-.665.148-.198.296-.76.963-.932 1.16-.172.198-.344.222-.64.074-.296-.148-1.25-.46-2.38-1.47-.88-.785-1.474-1.754-1.647-2.05-.172-.296-.018-.456.13-.603.134-.133.296-.345.444-.518.148-.173.198-.296.296-.494.099-.198.05-.37-.025-.518-.074-.148-.665-1.6-.91-2.19-.24-.577-.484-.5-.665-.51-.172-.008-.37-.01-.567-.01s-.518.074-.79.37c-.271.296-1.037 1.014-1.037 2.47 0 1.457 1.062 2.865 1.21 3.062.148.198 2.09 3.19 5.06 4.474.707.305 1.258.487 1.688.623.709.226 1.354.194 1.864.118.569-.085 1.75-.716 2-1.407.247-.692.247-1.285.173-1.408-.074-.123-.271-.198-.567-.346z"/></svg>
-  </a>
+    <script src="js/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      // ---- Photo slider ----
+      const slides = document.querySelectorAll(".hero-slide");
+      let currentSlide = 0;
 
-  <script src="js/api.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script>
-    // ---- Photo slider ----
-    const slides = document.querySelectorAll(".hero-slide");
-    let currentSlide = 0;
+      setInterval(() => {
+        slides[currentSlide].classList.remove("active");
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add("active");
+      }, 4500);
 
-    setInterval(() => {
-      slides[currentSlide].classList.remove("active");
-      currentSlide = (currentSlide + 1) % slides.length;
-      slides[currentSlide].classList.add("active");
-    }, 4500);
+      // ---- Three.js starfield background ----
+      const canvas = document.getElementById("heroCanvas");
+      const heroSection = document.querySelector(".hero");
 
-    // ---- Three.js starfield background ----
-    const canvas = document.getElementById("heroCanvas");
-    const heroSection = document.querySelector(".hero");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        heroSection.clientWidth / heroSection.clientHeight,
+        0.1,
+        1000,
+      );
+      camera.position.z = 5;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      60,
-      heroSection.clientWidth / heroSection.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.z = 5;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(heroSection.clientWidth, heroSection.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    // Generate a starfield as a point cloud
-    const starCount = 1500;
-    const starGeometry = new THREE.BufferGeometry();
-    const starPositions = new Float32Array(starCount * 3);
-
-    for (let i = 0; i < starCount; i++) {
-      starPositions[i * 3] = (Math.random() - 0.5) * 60;
-      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
-      starPositions[i * 3 + 2] = (Math.random() - 0.5) * 60;
-    }
-
-    starGeometry.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
-
-    const starMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.12,
-      transparent: true,
-      opacity: 0.8,
-    });
-
-    const starField = new THREE.Points(starGeometry, starMaterial);
-    scene.add(starField);
-
-    function animate() {
-      requestAnimationFrame(animate);
-      starField.rotation.y += 0.0006;
-      starField.rotation.x += 0.0002;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // Stop rendering once the hero section is scrolled out of view (saves battery/CPU)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          renderer.domElement.style.display = entry.isIntersecting ? "block" : "none";
-        });
-      },
-      { threshold: 0 }
-    );
-    observer.observe(heroSection);
-
-    window.addEventListener("resize", () => {
-      camera.aspect = heroSection.clientWidth / heroSection.clientHeight;
-      camera.updateProjectionMatrix();
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+      });
       renderer.setSize(heroSection.clientWidth, heroSection.clientHeight);
-    });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // ---- Footer year ----
-    document.getElementById("year").textContent = new Date().getFullYear();
+      // Generate a starfield as a point cloud
+      const starCount = 1500;
+      const starGeometry = new THREE.BufferGeometry();
+      const starPositions = new Float32Array(starCount * 3);
 
-    // ---- Scroll-in animation for any .category-row ----
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in-view");
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
+      for (let i = 0; i < starCount; i++) {
+        starPositions[i * 3] = (Math.random() - 0.5) * 60;
+        starPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+        starPositions[i * 3 + 2] = (Math.random() - 0.5) * 60;
+      }
 
-    function observeReveal(el) {
-      revealObserver.observe(el);
-    }
+      starGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(starPositions, 3),
+      );
 
-    // ---- Build a horizontal product row (used for both categories and featured) ----
-    function buildMiniCard(product) {
-      const a = document.createElement("a");
-      a.className = "mini-card";
-      a.href = product.featured
-        ? "products.html"
-        : `products.html?category=${encodeURIComponent(product.category || "")}`;
-      a.innerHTML = `
-        <img src="${product.images?.[0] || ''}" alt="${product.name}" />
+      const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.12,
+        transparent: true,
+        opacity: 0.8,
+      });
+
+      const starField = new THREE.Points(starGeometry, starMaterial);
+      scene.add(starField);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        starField.rotation.y += 0.0006;
+        starField.rotation.x += 0.0002;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Stop rendering once the hero section is scrolled out of view (saves battery/CPU)
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            renderer.domElement.style.display = entry.isIntersecting
+              ? "block"
+              : "none";
+          });
+        },
+        { threshold: 0 },
+      );
+      observer.observe(heroSection);
+
+      window.addEventListener("resize", () => {
+        camera.aspect = heroSection.clientWidth / heroSection.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(heroSection.clientWidth, heroSection.clientHeight);
+      });
+
+      // ---- Footer year ----
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // ---- Scroll-in animation for any .category-row ----
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in-view");
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+
+      function observeReveal(el) {
+        revealObserver.observe(el);
+      }
+
+      // ---- Build a horizontal product row (used for both categories and featured) ----
+      function getCart() {
+        return JSON.parse(localStorage.getItem("cart") || "[]");
+      }
+
+      function saveCart(cart) {
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function showToast() {
+        const toast = document.getElementById("toast");
+        toast.classList.add("show");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(
+          () => toast.classList.remove("show"),
+          3000,
+        );
+      }
+
+      function addToCart(product) {
+        const cart = getCart();
+        const existing = cart.find((item) => item.productId === product.id);
+
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images?.[0] || "",
+            quantity: 1,
+          });
+        }
+
+        saveCart(cart);
+        showToast();
+      }
+
+      function buildMiniCard(product) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "mini-card";
+
+        const link = document.createElement("a");
+        link.href = product.featured
+          ? "products.html"
+          : `products.html?category=${encodeURIComponent(product.category || "")}`;
+        link.innerHTML = `
+        <img src="${product.images?.[0] || ""}" alt="${product.name}" />
         <div class="mini-body">
           <p class="mini-name">${product.name}</p>
           <p class="mini-price">₦${Number(product.price).toLocaleString()}</p>
         </div>
       `;
-      return a;
-    }
 
-    // ---- Load category rows ----
-    async function loadCategoryRows() {
-      try {
-        const { categories } = await api.getCategories();
-        const wrap = document.getElementById("categoriesWrap");
+        const btn = document.createElement("button");
+        btn.textContent = "Add to Cart";
+        btn.style.cssText =
+          "width:100%;margin-top:6px;padding:6px;background:#d2691e;color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer;";
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          addToCart(product);
+        });
 
-        for (const cat of categories) {
-          const { products } = await api.getProducts(`?category=${encodeURIComponent(cat.name)}`);
-          if (products.length === 0) continue; // skip empty categories
+        wrapper.appendChild(link);
+        wrapper.appendChild(btn);
+        return wrapper;
+      }
 
-          const row = document.createElement("div");
-          row.className = "category-row";
-          row.innerHTML = `
+      // ---- Load category rows ----
+      async function loadCategoryRows() {
+        try {
+          const { categories } = await api.getCategories();
+          const wrap = document.getElementById("categoriesWrap");
+
+          for (const cat of categories) {
+            const { products } = await api.getProducts(
+              `?category=${encodeURIComponent(cat.name)}`,
+            );
+            if (products.length === 0) continue; // skip empty categories
+
+            const row = document.createElement("div");
+            row.className = "category-row";
+            row.innerHTML = `
             <div class="row-header">
               <h2 class="section-title">${cat.name}</h2>
               <a href="products.html?category=${encodeURIComponent(cat.name)}" class="see-more">See More →</a>
@@ -524,57 +686,69 @@
             <div class="row-scroll"></div>
           `;
 
-          const scrollDiv = row.querySelector(".row-scroll");
-          products.slice(0, 8).forEach((p) => scrollDiv.appendChild(buildMiniCard(p)));
+            const scrollDiv = row.querySelector(".row-scroll");
+            products
+              .slice(0, 8)
+              .forEach((p) => scrollDiv.appendChild(buildMiniCard(p)));
 
-          wrap.appendChild(row);
-          observeReveal(row);
+            wrap.appendChild(row);
+            observeReveal(row);
+          }
+        } catch (err) {
+          console.error("Error loading category rows:", err.message);
         }
-      } catch (err) {
-        console.error("Error loading category rows:", err.message);
       }
-    }
 
-    // ---- Load featured products ----
-    async function loadFeatured() {
+      // ---- Load featured products ----
+      async function loadFeatured() {
+        try {
+          const { products } = await api.getProducts("?featured=true");
+          if (products.length === 0) return;
+
+          document.getElementById("featuredWrap").style.display = "block";
+          const scrollDiv = document.getElementById("featuredScroll");
+          products.forEach((p) => scrollDiv.appendChild(buildMiniCard(p)));
+          observeReveal(document.getElementById("featuredRow"));
+        } catch (err) {
+          console.error("Error loading featured products:", err.message);
+        }
+      }
+
+      async function loadWithRetry(fn, retries = 2) {
       try {
-        const { products } = await api.getProducts("?featured=true");
-        if (products.length === 0) return;
-
-        document.getElementById("featuredWrap").style.display = "block";
-        const scrollDiv = document.getElementById("featuredScroll");
-        products.forEach((p) => scrollDiv.appendChild(buildMiniCard(p)));
-        observeReveal(document.getElementById("featuredRow"));
+        await fn();
       } catch (err) {
-        console.error("Error loading featured products:", err.message);
+        if (retries > 0) {
+          setTimeout(() => loadWithRetry(fn, retries - 1), 3000);
+        }
       }
     }
 
-    loadCategoryRows();
-    loadFeatured();
+    loadWithRetry(loadCategoryRows);
+    loadWithRetry(loadFeatured);
 
-    function updateAuthLink() {
-      const authLink = document.getElementById("authLink");
-      const savedUser = localStorage.getItem("customerUser");
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        authLink.textContent = `Log Out (${user.name.split(" ")[0]})`;
-        authLink.href = "#";
-        authLink.onclick = (e) => {
-          e.preventDefault();
-          localStorage.removeItem("customerToken");
-          localStorage.removeItem("customerUser");
-          window.location.reload();
-        };
+      function updateAuthLink() {
+        const authLink = document.getElementById("authLink");
+        const savedUser = localStorage.getItem("customerUser");
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          authLink.textContent = `Log Out (${user.name.split(" ")[0]})`;
+          authLink.href = "#";
+          authLink.onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("customerToken");
+            localStorage.removeItem("customerUser");
+            window.location.reload();
+          };
+        }
       }
-    }
-    updateAuthLink();
+      updateAuthLink();
 
-    window.addEventListener("pageshow", (event) => {
-      if (event.persisted) {
-        updateAuthLink();
-      }
-    });
-  </script>
-</body>
+      window.addEventListener("pageshow", (event) => {
+        if (event.persisted) {
+          updateAuthLink();
+        }
+      });
+    </script>
+  </body>
 </html>
