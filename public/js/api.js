@@ -14,7 +14,41 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-async function apiRequest(path, { method = "GET", body, isJson = true } = {}) {
+async function tryRefreshToken() {
+  const isCustomer = !!localStorage.getItem("customerToken");
+  const refreshToken = isCustomer
+    ? localStorage.getItem("customerRefreshToken")
+    : localStorage.getItem("refreshToken");
+
+  if (!refreshToken) return false;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+
+    if (isCustomer) {
+      localStorage.setItem("customerToken", data.token);
+      localStorage.setItem("customerRefreshToken", data.refreshToken);
+    } else {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function apiRequest(
+  path,
+  { method = "GET", body, isJson = true } = {},
+  _isRetry = false,
+) {
   const headers = { ...authHeaders() };
   if (isJson) headers["Content-Type"] = "application/json";
 
@@ -27,14 +61,22 @@ async function apiRequest(path, { method = "GET", body, isJson = true } = {}) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    // Token expired or invalid — send the right kind of user back to their login
+    if (response.status === 401 && !_isRetry) {
+      const refreshed = await tryRefreshToken();
+      if (refreshed) {
+        return apiRequest(path, { method, body, isJson }, true);
+      }
+    }
+
     if (response.status === 401) {
       if (localStorage.getItem("customerToken")) {
         localStorage.removeItem("customerToken");
+        localStorage.removeItem("customerRefreshToken");
         localStorage.removeItem("customerUser");
         window.location.href = "login.html";
       } else {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
         window.location.href = "admin.html";
       }

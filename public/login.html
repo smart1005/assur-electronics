@@ -107,6 +107,7 @@ document.getElementById("registerLink").href = `register.html?redirect=${encodeU
         );
 
         localStorage.setItem("customerToken", data.token);
+        localStorage.setItem("customerRefreshToken", data.refreshToken);
         localStorage.setItem("customerUser", JSON.stringify(data.user));
         window.location.href = redirectTo;
       } catch (err) {
