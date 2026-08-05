@@ -43,9 +43,32 @@
         font-weight: bold;
       }
 
-      .top-bar a:hover {
-        color: #d2691e;
+     .top-bar a:hover {
+      color: #d2691e;
+    }
+
+    .nav-search {
+      flex-basis: 100%;
+      order: 3;
+      margin-top: 8px;
+    }
+
+    .nav-search input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    @media (min-width: 700px) {
+      .nav-search {
+        flex-basis: auto;
+        order: 0;
+        margin-top: 0;
+        max-width: 260px;
       }
+    }
 
       /* HERO SECTION — three layers stacked: 3D canvas, photo slider, text/buttons */
       .hero {
@@ -324,17 +347,129 @@
         text-decoration: none;
       }
 
-      .whatsapp-float svg {
-        width: 28px;
-        height: 28px;
-        fill: #fff;
-      }
-    </style>
+     .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      fill: #fff;
+    }
+
+    /* Quick-view modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      color: #222;
+      border-radius: 12px;
+      max-width: 380px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-box img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .modal-body h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .modal-body .rating {
+      color: #f6b100;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .modal-body .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #d2691e;
+      margin: 0 0 10px;
+    }
+
+    .modal-body .desc {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-actions button, .modal-actions a {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      font-size: 13px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-actions .btn-add {
+      background: #d2691e;
+      color: #fff;
+    }
+
+    .modal-actions .btn-view {
+      background: #eee;
+      color: #222;
+    }
+  </style>
   </head>
   <body>
     <div class="top-bar">
       <h2>Assur Electronics</h2>
       <div>
+        <div class="nav-search">
+      <input type="text" id="navSearch" placeholder="Search products..." />
+    </div>
+    <div>
         <a href="index.html">Home</a>
         <a href="products.html">Products</a>
         <a href="about.html">About Us</a>
@@ -447,9 +582,11 @@
       <div class="footer-wrap">
         <div class="footer-col">
           <h3>Contact Us</h3>
-          <a href="https://wa.me/2348061402159" target="_blank"
-            >WhatsApp: 08061402159</a
-          >
+          <div class="modal-overlay" id="quickViewOverlay">
+    <div class="modal-box" id="quickViewBox"></div>
+  </div>
+
+  <a class="whatsapp-float" href="https://wa.me/2348065105546" target="_blank" aria-label="Chat on WhatsApp">
           <a href="mailto:assurelectronics10@gmail.com"
             >Email: assurelectronics10@gmail.com</a
           >
@@ -677,7 +814,48 @@
         showToast();
       }
 
-      function buildMiniCard(product) {
+function openQuickView(product) {
+      const overlay = document.getElementById("quickViewOverlay");
+      const box = document.getElementById("quickViewBox");
+      const viewHref = product.featured
+        ? "products.html"
+        : `products.html?category=${encodeURIComponent(product.category || "")}`;
+
+      box.innerHTML = `
+        <button class="modal-close" id="modalCloseBtn">✕</button>
+        <img src="${product.images?.[0] || ''}" alt="${product.name}" />
+        <div class="modal-body">
+          <h3>${product.name}</h3>
+          <div class="rating">★★★★★</div>
+          <p class="price">₦${Number(product.price).toLocaleString()}</p>
+          <p class="desc">${product.description || ''}</p>
+          <div class="modal-actions">
+            <button class="btn-add" id="modalAddBtn">Add to Cart</button>
+            <a class="btn-view" href="${viewHref}">View Details</a>
+          </div>
+        </div>
+      `;
+
+      overlay.classList.add("show");
+
+      document.getElementById("modalCloseBtn").addEventListener("click", closeQuickView);
+      document.getElementById("modalAddBtn").addEventListener("click", () => {
+        addToCart(product);
+        closeQuickView();
+      });
+    }
+
+    function closeQuickView() {
+      document.getElementById("quickViewOverlay").classList.remove("show");
+    }
+
+    document.getElementById("quickViewOverlay").addEventListener("click", (e) => {
+      if (e.target.id === "quickViewOverlay") closeQuickView();
+    });
+
+    function buildMiniCard(product) {
+
+      
         const wrapper = document.createElement("div");
         wrapper.className = "mini-card";
 
@@ -694,6 +872,13 @@
           <p class="mini-price">₦${Number(product.price).toLocaleString()}</p>
         </div>
       `;
+const img = link.querySelector("img");
+      img.style.cursor = "pointer";
+      img.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openQuickView(product);
+      });
 
         const btn = document.createElement("button");
         btn.textContent = "Add to Cart";
@@ -788,6 +973,12 @@
         }
       }
       updateAuthLink();
+
+      document.getElementById("navSearch").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.value.trim()) {
+        window.location.href = `products.html?search=${encodeURIComponent(e.target.value.trim())}`;
+      }
+    });
 
       window.addEventListener("pageshow", (event) => {
         if (event.persisted) {
