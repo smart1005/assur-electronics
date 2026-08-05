@@ -182,12 +182,6 @@
         background: #fff;
       }
 
-      /* Placeholder below hero — category rows and featured products come next */
-      .below-hero-placeholder {
-        padding: 40px 16px;
-        text-align: center;
-        color: #999;
-      }
       /* Category rows + featured products */
       .section-wrap {
         max-width: 1100px;
@@ -465,11 +459,10 @@
   <body>
     <div class="top-bar">
       <h2>Assur Electronics</h2>
+      <div class="nav-search">
+        <input type="text" id="navSearch" placeholder="Search products..." />
+      </div>
       <div>
-        <div class="nav-search">
-      <input type="text" id="navSearch" placeholder="Search products..." />
-    </div>
-    <div>
         <a href="index.html">Home</a>
         <a href="products.html">Products</a>
         <a href="about.html">About Us</a>
@@ -582,11 +575,6 @@
       <div class="footer-wrap">
         <div class="footer-col">
           <h3>Contact Us</h3>
-          <div class="modal-overlay" id="quickViewOverlay">
-    <div class="modal-box" id="quickViewBox"></div>
-  </div>
-
-  <a class="whatsapp-float" href="https://wa.me/2348065105546" target="_blank" aria-label="Chat on WhatsApp">
           <a href="mailto:assurelectronics10@gmail.com"
             >Email: assurelectronics10@gmail.com</a
           >
@@ -615,6 +603,10 @@
         &copy; <span id="year"></span> Assur Electronics. All rights reserved.
       </div>
     </footer>
+
+    <div class="modal-overlay" id="quickViewOverlay">
+      <div class="modal-box" id="quickViewBox"></div>
+    </div>
 
     <a
       class="whatsapp-float"
@@ -814,48 +806,46 @@
         showToast();
       }
 
-function openQuickView(product) {
-      const overlay = document.getElementById("quickViewOverlay");
-      const box = document.getElementById("quickViewBox");
-      const viewHref = product.featured
-        ? "products.html"
-        : `products.html?category=${encodeURIComponent(product.category || "")}`;
+      function openQuickView(product) {
+        const overlay = document.getElementById("quickViewOverlay");
+        const box = document.getElementById("quickViewBox");
+        const viewHref = product.featured
+          ? "products.html"
+          : `products.html?category=${encodeURIComponent(product.category || "")}`;
 
-      box.innerHTML = `
-        <button class="modal-close" id="modalCloseBtn">✕</button>
-        <img src="${product.images?.[0] || ''}" alt="${product.name}" />
-        <div class="modal-body">
-          <h3>${product.name}</h3>
-          <div class="rating">★★★★★</div>
-          <p class="price">₦${Number(product.price).toLocaleString()}</p>
-          <p class="desc">${product.description || ''}</p>
-          <div class="modal-actions">
-            <button class="btn-add" id="modalAddBtn">Add to Cart</button>
-            <a class="btn-view" href="${viewHref}">View Details</a>
+        box.innerHTML = `
+          <button class="modal-close" id="modalCloseBtn">✕</button>
+          <img src="${product.images?.[0] || ''}" alt="${product.name}" />
+          <div class="modal-body">
+            <h3>${product.name}</h3>
+            <div class="rating">★★★★★</div>
+            <p class="price">₦${Number(product.price).toLocaleString()}</p>
+            <p class="desc">${product.description || ''}</p>
+            <div class="modal-actions">
+              <button class="btn-add" id="modalAddBtn">Add to Cart</button>
+              <a class="btn-view" href="${viewHref}">View Details</a>
+            </div>
           </div>
-        </div>
-      `;
+        `;
 
-      overlay.classList.add("show");
+        overlay.classList.add("show");
 
-      document.getElementById("modalCloseBtn").addEventListener("click", closeQuickView);
-      document.getElementById("modalAddBtn").addEventListener("click", () => {
-        addToCart(product);
-        closeQuickView();
+        document.getElementById("modalCloseBtn").addEventListener("click", closeQuickView);
+        document.getElementById("modalAddBtn").addEventListener("click", () => {
+          addToCart(product);
+          closeQuickView();
+        });
+      }
+
+      function closeQuickView() {
+        document.getElementById("quickViewOverlay").classList.remove("show");
+      }
+
+      document.getElementById("quickViewOverlay").addEventListener("click", (e) => {
+        if (e.target.id === "quickViewOverlay") closeQuickView();
       });
-    }
 
-    function closeQuickView() {
-      document.getElementById("quickViewOverlay").classList.remove("show");
-    }
-
-    document.getElementById("quickViewOverlay").addEventListener("click", (e) => {
-      if (e.target.id === "quickViewOverlay") closeQuickView();
-    });
-
-    function buildMiniCard(product) {
-
-      
+      function buildMiniCard(product) {
         const wrapper = document.createElement("div");
         wrapper.className = "mini-card";
 
@@ -872,13 +862,13 @@ function openQuickView(product) {
           <p class="mini-price">₦${Number(product.price).toLocaleString()}</p>
         </div>
       `;
-const img = link.querySelector("img");
-      img.style.cursor = "pointer";
-      img.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openQuickView(product);
-      });
+        const img = link.querySelector("img");
+        img.style.cursor = "pointer";
+        img.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openQuickView(product);
+        });
 
         const btn = document.createElement("button");
         btn.textContent = "Add to Cart";
@@ -975,10 +965,10 @@ const img = link.querySelector("img");
       updateAuthLink();
 
       document.getElementById("navSearch").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && e.target.value.trim()) {
-        window.location.href = `products.html?search=${encodeURIComponent(e.target.value.trim())}`;
-      }
-    });
+        if (e.key === "Enter" && e.target.value.trim()) {
+          window.location.href = `products.html?search=${encodeURIComponent(e.target.value.trim())}`;
+        }
+      });
 
       window.addEventListener("pageshow", (event) => {
         if (event.persisted) {
