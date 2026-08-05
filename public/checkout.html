@@ -207,12 +207,11 @@
         // Step 2: initialize one combined payment covering all orders just created
         payBtn.textContent = "Starting payment...";
 
-        const orderIds = createdOrders.map((o) => o.id);
+       const orderIds = createdOrders.map((o) => o.id);
 
         const paymentResult = await api.initializePayment({
           orderIds,
           email: customerEmail,
-          amount: total,
         });
 
         // Clear the cart only once payment has actually been initialized
