@@ -3,7 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assur Electronics — Home</title>
+    <title>
+      Assur Electronics — Buy TVs, Fridges & Home Appliances Online in Nigeria
+    </title>
+    <meta
+      name="description"
+      content="Shop quality televisions, fridges, and home appliances online at Assur Electronics. Trusted brands, fair prices, and fast delivery across Nigeria."
+    />
     <style>
       * {
         box-sizing: border-box;
@@ -16,7 +22,6 @@
         color: #fff;
       }
 
-    
       .top-bar {
         display: flex;
         flex-wrap: wrap;
@@ -26,7 +31,7 @@
         padding: 12px 20px;
         background: #0f2344;
         border-bottom: 3px solid #d2691e;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         position: sticky;
         top: 0;
         z-index: 50;
@@ -58,10 +63,12 @@
         font-weight: 600;
         padding: 6px 10px;
         border-radius: 6px;
-        transition: background 0.2s ease, color 0.2s ease;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
       }
 
-     .top-bar nav a {
+      .top-bar nav a {
         position: relative;
       }
 
@@ -77,8 +84,8 @@
         transition: transform 0.2s ease;
       }
 
-     .top-bar nav a:hover {
-        background: rgba(255,255,255,0.08);
+      .top-bar nav a:hover {
+        background: rgba(255, 255, 255, 0.08);
         color: #d2691e;
       }
 
@@ -86,13 +93,13 @@
         transform: scaleX(1);
       }
 
-    .nav-search {
+      .nav-search {
         flex-basis: 100%;
         order: 3;
         position: relative;
       }
 
-     .nav-search::before {
+      .nav-search::before {
         content: "🔍";
         position: absolute;
         left: 14px;
@@ -104,25 +111,27 @@
         filter: sepia(1) saturate(4) hue-rotate(-10deg);
       }
 
-     .nav-search input {
+      .nav-search input {
         width: 100%;
         padding: 10px 14px 10px 36px;
-        border: 1px solid rgba(255,255,255,0.15);
-        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.1);
         color: #fff;
         border-radius: 20px;
         font-size: 14px;
-        transition: border-color 0.2s ease, background 0.2s ease;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease;
       }
 
       .nav-search input::placeholder {
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
       }
 
       .nav-search input:focus {
         outline: none;
         border-color: #d2691e;
-        background: rgba(255,255,255,0.18);
+        background: rgba(255, 255, 255, 0.18);
       }
 
       .nav-search input:focus {
@@ -131,7 +140,7 @@
         background: #fff;
       }
 
-     @media (min-width: 700px) {
+      @media (min-width: 700px) {
         .nav-search {
           flex-basis: auto;
           order: 0;
@@ -414,124 +423,125 @@
         text-decoration: none;
       }
 
-     .whatsapp-float svg {
-      width: 28px;
-      height: 28px;
-      fill: #fff;
-    }
+      .whatsapp-float svg {
+        width: 28px;
+        height: 28px;
+        fill: #fff;
+      }
 
-    /* Quick-view modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-      padding: 20px;
-    }
+      /* Quick-view modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 500;
+        padding: 20px;
+      }
 
-    .modal-overlay.show {
-      display: flex;
-    }
+      .modal-overlay.show {
+        display: flex;
+      }
 
-    .modal-box {
-      background: #fff;
-      color: #222;
-      border-radius: 12px;
-      max-width: 380px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-    }
+      .modal-box {
+        background: #fff;
+        color: #222;
+        border-radius: 12px;
+        max-width: 380px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
 
-    .modal-box img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 12px 12px 0 0;
-    }
+      .modal-box img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+      }
 
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      font-size: 16px;
-      cursor: pointer;
-      line-height: 1;
-    }
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 16px;
+        cursor: pointer;
+        line-height: 1;
+      }
 
-    .modal-body {
-      padding: 18px;
-    }
+      .modal-body {
+        padding: 18px;
+      }
 
-    .modal-body h3 {
-      margin: 0 0 6px;
-      font-size: 18px;
-    }
+      .modal-body h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
 
-    .modal-body .rating {
-      color: #f6b100;
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
+      .modal-body .rating {
+        color: #f6b100;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
 
-    .modal-body .price {
-      font-size: 20px;
-      font-weight: bold;
-      color: #d2691e;
-      margin: 0 0 10px;
-    }
+      .modal-body .price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #d2691e;
+        margin: 0 0 10px;
+      }
 
-    .modal-body .desc {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
+      .modal-body .desc {
+        font-size: 13px;
+        color: #555;
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-    }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+      }
 
-    .modal-actions button, .modal-actions a {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-weight: bold;
-      font-size: 13px;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-    }
+      .modal-actions button,
+      .modal-actions a {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        font-size: 13px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
 
-    .modal-actions .btn-add {
-      background: #d2691e;
-      color: #fff;
-    }
+      .modal-actions .btn-add {
+        background: #d2691e;
+        color: #fff;
+      }
 
-    .modal-actions .btn-view {
-      background: #eee;
-      color: #222;
-    }
-  </style>
+      .modal-actions .btn-view {
+        background: #eee;
+        color: #222;
+      }
+    </style>
   </head>
   <body>
-   <div class="top-bar">
-     <h2>Assur <span>Electronics</span></h2>
+    <div class="top-bar">
+      <h2>Assur <span>Electronics</span></h2>
       <div class="nav-search">
         <input type="text" id="navSearch" placeholder="Search products..." />
       </div>
@@ -888,12 +898,12 @@
 
         box.innerHTML = `
           <button class="modal-close" id="modalCloseBtn">✕</button>
-          <img src="${product.images?.[0] || ''}" alt="${product.name}" />
+          <img src="${product.images?.[0] || ""}" alt="${product.name}" />
           <div class="modal-body">
             <h3>${product.name}</h3>
             <div class="rating">★★★★★</div>
             <p class="price">₦${Number(product.price).toLocaleString()}</p>
-            <p class="desc">${product.description || ''}</p>
+            <p class="desc">${product.description || ""}</p>
             <div class="modal-actions">
               <button class="btn-add" id="modalAddBtn">Add to Cart</button>
               <a class="btn-view" href="${viewHref}">View Details</a>
@@ -903,7 +913,9 @@
 
         overlay.classList.add("show");
 
-        document.getElementById("modalCloseBtn").addEventListener("click", closeQuickView);
+        document
+          .getElementById("modalCloseBtn")
+          .addEventListener("click", closeQuickView);
         document.getElementById("modalAddBtn").addEventListener("click", () => {
           addToCart(product);
           closeQuickView();
@@ -914,9 +926,11 @@
         document.getElementById("quickViewOverlay").classList.remove("show");
       }
 
-      document.getElementById("quickViewOverlay").addEventListener("click", (e) => {
-        if (e.target.id === "quickViewOverlay") closeQuickView();
-      });
+      document
+        .getElementById("quickViewOverlay")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "quickViewOverlay") closeQuickView();
+        });
 
       function buildMiniCard(product) {
         const wrapper = document.createElement("div");

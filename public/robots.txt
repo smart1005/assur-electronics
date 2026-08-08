@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-products.html
+Disallow: /admin-orders.html
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /orders.html
+Disallow: /order-success.html
+Disallow: /login.html
+Disallow: /register.html
+
+Sitemap: https://assur-electronics.web.app/sitemap.xml
