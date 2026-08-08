@@ -14,11 +14,21 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+
+function getTokenType() {
+  if (localStorage.getItem("token")) return "admin";
+  if (localStorage.getItem("customerToken")) return "customer";
+  return null;
+}
+
 async function tryRefreshToken() {
-  const isCustomer = !!localStorage.getItem("customerToken");
-  const refreshToken = isCustomer
-    ? localStorage.getItem("customerRefreshToken")
-    : localStorage.getItem("refreshToken");
+  const tokenType = getTokenType();
+  if (!tokenType) return false;
+
+  const refreshToken =
+    tokenType === "admin"
+      ? localStorage.getItem("refreshToken")
+      : localStorage.getItem("customerRefreshToken");
 
   if (!refreshToken) return false;
 
@@ -31,12 +41,12 @@ async function tryRefreshToken() {
     if (!res.ok) return false;
     const data = await res.json();
 
-    if (isCustomer) {
-      localStorage.setItem("customerToken", data.token);
-      localStorage.setItem("customerRefreshToken", data.refreshToken);
-    } else {
+    if (tokenType === "admin") {
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
+    } else {
+      localStorage.setItem("customerToken", data.token);
+      localStorage.setItem("customerRefreshToken", data.refreshToken);
     }
     return true;
   } catch {
@@ -68,19 +78,20 @@ async function apiRequest(
       }
     }
 
-    if (response.status === 401) {
-      if (localStorage.getItem("customerToken")) {
-        localStorage.removeItem("customerToken");
-        localStorage.removeItem("customerRefreshToken");
-        localStorage.removeItem("customerUser");
-        window.location.href = "login.html";
-      } else {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
-        window.location.href = "admin.html";
-      }
-    }
+   if (response.status === 401) {
+     const tokenType = getTokenType();
+     if (tokenType === "admin") {
+       localStorage.removeItem("token");
+       localStorage.removeItem("refreshToken");
+       localStorage.removeItem("user");
+       window.location.href = "admin.html";
+     } else {
+       localStorage.removeItem("customerToken");
+       localStorage.removeItem("customerRefreshToken");
+       localStorage.removeItem("customerUser");
+       window.location.href = "login.html";
+     }
+   }
     throw new Error(data.message || "Request failed");
   }
 
