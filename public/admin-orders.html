@@ -11,9 +11,9 @@
 
       body {
         font-family: Arial, Helvetica, sans-serif;
-        background: #f4f4f4;
+        background: #0f2344;
         margin: 0;
-        color: #222;
+        color: #fff;
       }
 
       .top-bar {
@@ -22,9 +22,26 @@
         justify-content: space-between;
         align-items: center;
         gap: 8px;
-        padding: 14px 16px;
-        background: #fff;
-        border-bottom: 1px solid #ddd;
+        padding: 14px 20px;
+        background: #0f2344;
+        border-bottom: 3px solid #d2691e;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+
+      .top-bar h2 {
+        color: #fff;
+      }
+
+      .top-bar a {
+        color: #e8ecf5 !important;
+      }
+
+      .top-bar a:hover {
+        color: #d2691e !important;
+      }
+
+      h1 {
+        color: #fff;
       }
 
       .top-bar h2 {
@@ -167,8 +184,8 @@
       <table>
         <thead>
           <tr>
-           <th>Customer</th>
-          <th>Product / Delivery</th>
+            <th>Customer</th>
+            <th>Product / Delivery</th>
             <th>Qty</th>
             <th>Total</th>
             <th>Payment</th>
@@ -204,7 +221,11 @@
             return;
           }
 
-          data.orders.forEach((order) => {
+          const sortedOrders = [...data.orders].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          );
+
+          sortedOrders.forEach((order) => {
             const row = document.createElement("tr");
 
             const statusOptionsHtml = STATUS_OPTIONS.map(
@@ -214,7 +235,7 @@
 
             row.innerHTML = `
            <td data-label="Customer">${order.customerName}<br><small>${order.customerEmail}</small><br><small>${order.customerPhone || ""}</small></td>
-            <td data-label="Product">${order.productName || order.productId}<br><small>${order.customerAddress || ""}</small></td>
+          <td data-label="Product">${order.productName || order.productId}<br><small>${order.customerAddress || ""}, ${order.customerCity || ""}, ${order.customerState || ""}</small></td>
             <td data-label="Qty">${order.quantity}</td>
             <td data-label="Total">₦${Number(order.totalPrice).toLocaleString()}</td>
             <td data-label="Payment"><span class="${order.paymentStatus === "paid" ? "payment-paid" : "payment-unpaid"}">${order.paymentStatus}</span></td>

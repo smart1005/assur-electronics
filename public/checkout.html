@@ -113,8 +113,14 @@
       <label for="phone">Phone Number</label>
       <input type="tel" id="phone" required />
 
-      <label for="address">Delivery Address</label>
+     <label for="address">Delivery Address</label>
       <input type="text" id="address" required />
+
+      <label for="city">City</label>
+      <input type="text" id="city" required />
+
+      <label for="state">State</label>
+      <input type="text" id="state" required />
 
       <button type="submit" id="payBtn">Pay Now</button>
       <p class="error" id="errorMsg"></p>
@@ -180,10 +186,12 @@
       const payBtn = document.getElementById("payBtn");
       errorMsg.textContent = "";
 
-     const customerName = document.getElementById("name").value;
+    const customerName = document.getElementById("name").value;
       const customerEmail = document.getElementById("email").value;
       const customerPhone = document.getElementById("phone").value;
       const customerAddress = document.getElementById("address").value;
+      const customerCity = document.getElementById("city").value;
+      const customerState = document.getElementById("state").value;
 
       payBtn.disabled = true;
       payBtn.textContent = "Placing order...";
@@ -193,13 +201,15 @@
         const createdOrders = [];
 
         for (const item of cart) {
-          const result = await api.createOrder({
+         const result = await api.createOrder({
             productId: item.productId,
             quantity: item.quantity,
             customerName,
             customerEmail,
             customerAddress,
             customerPhone,
+            customerCity,
+            customerState,
           });
           createdOrders.push(result.order);
         }

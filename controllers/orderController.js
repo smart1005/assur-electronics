@@ -10,6 +10,8 @@ const createOrder = async (req, res) => {
       customerEmail,
       customerAddress,
       customerPhone,
+      customerCity,
+      customerState,
     } = req.body;
     const customer = req.user.uid; // from authMiddleware
 
@@ -19,7 +21,9 @@ const createOrder = async (req, res) => {
       !customerName ||
       !customerEmail ||
       !customerAddress ||
-      !customerPhone
+      !customerPhone ||
+      !customerCity ||
+      !customerState
     ) {
       return res.status(400).json({ message: "Missing required order fields" });
     }
@@ -54,6 +58,8 @@ const createOrder = async (req, res) => {
         customerEmail,
         customerAddress,
         customerPhone,
+        customerCity,
+        customerState,
         totalPrice,
         status: "pending",
         paymentStatus: "unpaid",

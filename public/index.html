@@ -16,15 +16,17 @@
         color: #fff;
       }
 
+    
       .top-bar {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
-        gap: 8px;
-        padding: 14px 16px;
-        background: #fff;
+        gap: 10px 16px;
+        padding: 12px 20px;
+        background: #0f2344;
         border-bottom: 3px solid #d2691e;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         position: sticky;
         top: 0;
         z-index: 50;
@@ -32,43 +34,114 @@
 
       .top-bar h2 {
         margin: 0;
-        font-size: 18px;
+        font-size: 19px;
+        color: #fff;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
       }
 
-      .top-bar a {
-        color: #222;
+      .top-bar h2 span {
+        color: #d2691e;
+      }
+
+      .top-bar nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .top-bar nav a {
+        color: #e8ecf5;
         text-decoration: none;
-        font-size: 14px;
-        margin-left: 14px;
-        font-weight: bold;
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 6px 10px;
+        border-radius: 6px;
+        transition: background 0.2s ease, color 0.2s ease;
       }
 
-     .top-bar a:hover {
-      color: #d2691e;
-    }
+     .top-bar nav a {
+        position: relative;
+      }
+
+      .top-bar nav a::after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 2px;
+        height: 2px;
+        background: #d2691e;
+        transform: scaleX(0);
+        transition: transform 0.2s ease;
+      }
+
+     .top-bar nav a:hover {
+        background: rgba(255,255,255,0.08);
+        color: #d2691e;
+      }
+
+      .top-bar nav a:hover::after {
+        transform: scaleX(1);
+      }
 
     .nav-search {
-      flex-basis: 100%;
-      order: 3;
-      margin-top: 8px;
-    }
-
-    .nav-search input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      font-size: 14px;
-    }
-
-    @media (min-width: 700px) {
-      .nav-search {
-        flex-basis: auto;
-        order: 0;
-        margin-top: 0;
-        max-width: 260px;
+        flex-basis: 100%;
+        order: 3;
+        position: relative;
       }
-    }
+
+     .nav-search::before {
+        content: "🔍";
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        opacity: 0.7;
+        pointer-events: none;
+        filter: sepia(1) saturate(4) hue-rotate(-10deg);
+      }
+
+     .nav-search input {
+        width: 100%;
+        padding: 10px 14px 10px 36px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        border-radius: 20px;
+        font-size: 14px;
+        transition: border-color 0.2s ease, background 0.2s ease;
+      }
+
+      .nav-search input::placeholder {
+        color: rgba(255,255,255,0.6);
+      }
+
+      .nav-search input:focus {
+        outline: none;
+        border-color: #d2691e;
+        background: rgba(255,255,255,0.18);
+      }
+
+      .nav-search input:focus {
+        outline: none;
+        border-color: #d2691e;
+        background: #fff;
+      }
+
+     @media (min-width: 700px) {
+        .nav-search {
+          flex-basis: auto;
+          order: 0;
+          flex: 1;
+          max-width: 320px;
+          margin: 0 20px;
+          background: transparent;
+          padding: 0;
+        }
+      }
 
       /* HERO SECTION — three layers stacked: 3D canvas, photo slider, text/buttons */
       .hero {
@@ -457,19 +530,19 @@
   </style>
   </head>
   <body>
-    <div class="top-bar">
-      <h2>Assur Electronics</h2>
+   <div class="top-bar">
+     <h2>Assur <span>Electronics</span></h2>
       <div class="nav-search">
         <input type="text" id="navSearch" placeholder="Search products..." />
       </div>
-      <div>
+      <nav>
         <a href="index.html">Home</a>
         <a href="products.html">Products</a>
         <a href="about.html">About Us</a>
         <a href="cart.html">Cart</a>
         <a href="orders.html">My Orders</a>
         <a href="login.html" id="authLink">Login</a>
-      </div>
+      </nav>
     </div>
 
     <div class="hero">

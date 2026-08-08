@@ -7,34 +7,46 @@
   <style>
     * { box-sizing: border-box; }
 
-    body {
+   body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f4f4;
+      background: #0f2344;
       margin: 0;
-      color: #222;
+      color: #fff;
     }
 
-    .top-bar {
+   .top-bar {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      padding: 14px 16px;
-      background: #fff;
+      padding: 14px 20px;
+      background: #0f2344;
       border-bottom: 3px solid #d2691e;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       position: sticky;
       top: 0;
       z-index: 10;
     }
 
-    .top-bar h2 { margin: 0; font-size: 18px; }
+    .top-bar h2 { margin: 0; font-size: 18px; color: #fff; }
+
+    .top-bar h2 span { color: #d2691e; }
 
     .top-bar a {
-      color: #222;
+      color: #e8ecf5;
       text-decoration: none;
       font-size: 14px;
+      font-weight: 600;
       margin-left: 12px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .top-bar a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #d2691e;
     }
 
     .page-wrap {
@@ -43,19 +55,25 @@
       padding: 30px 16px;
     }
 
-    h1 {
+   h1 {
       font-size: 24px;
+      color: #fff;
       border-left: 4px solid #d2691e;
       padding-left: 12px;
       margin-bottom: 20px;
     }
 
-    .card {
+   .card {
       background: #fff;
-      border-radius: 8px;
+      border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      transition: 0.25s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
     }
 
     .card h2 {
@@ -92,7 +110,7 @@
 </head>
 <body>
   <div class="top-bar">
-    <h2>Assur Electronics</h2>
+    <h2>Assur <span>Electronics</span></h2>
     <div>
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
@@ -126,7 +144,7 @@
       <h2>Get In Touch</h2>
       <div class="contact-list">
         <a href="https://wa.me/2348065105546" target="_blank">WhatsApp: 0806 510 5546</a>
-        <a href="mailto:info@assurelectronics.com">Email: info@assurelectronics.com</a>
+        <a href="mailto:info@assurelectronics.com">Email: assurelectronics10.com</a>
       </div>
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3974.4479768387064!2d7.931600574068168!3d5.030861694945689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105d57c0f3c8e92d%3A0x48cecad2bb0842b1!2sAssur%20Electronics!5e0!3m2!1sen!2sng!4v1785432426917!5m2!1sen!2sng"

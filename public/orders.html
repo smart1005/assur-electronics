@@ -129,7 +129,7 @@
           card.innerHTML = `
            <div class="order-row"><span>Product</span><span>${order.productName || order.productId}</span></div>
             <div class="order-row"><span>Quantity</span><span>${order.quantity}</span></div>
-            <div class="order-row"><span>Delivery Address</span><span>${order.customerAddress || ''}</span></div> 
+            <div class="order-row"><span>Delivery Address</span><span>${order.customerAddress || ''}, ${order.customerCity || ''}, ${order.customerState || ''}</span></div>
             <div class="order-row"><span>Total</span><span>₦${Number(order.totalPrice).toLocaleString()}</span></div>
             <div class="order-row"><span>Payment</span><span class="${order.paymentStatus === 'paid' ? 'payment-paid' : 'payment-unpaid'}">${order.paymentStatus}</span></div>
             <div class="order-row"><span>Status</span><span class="status-pill status-${order.status}">${order.status}</span></div>
